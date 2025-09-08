@@ -142,7 +142,9 @@ EFO
 # 訪問路徑
 http://127.0.0.1:8000/docs
 -->
+
 # 目錄結構
+```text
 Hanlp2/
 ├── app/                  # API 與程式碼
 │   ├── __init__.py
@@ -160,3 +162,4 @@ Hanlp2/
 │   └── test_api.py
 ├── requirements.txt      # 套件依賴
 └── README.md
+```
