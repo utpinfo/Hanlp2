@@ -38,7 +38,7 @@ Y    I-PRODUCT
 ```
 
 # 训练HANLP2
-```
+```python
 import hanlp
 import os
 """
@@ -84,7 +84,7 @@ print(result)
 ```
 
 # 測試[2]
-```
+```python
 # 1️⃣ 加载模型
 import hanlp
 
@@ -110,12 +110,17 @@ for token, pos, ner in zip(res['tok'], res['pos'], res['ner']):
 ```
 
 # 啟動API
+```shell
 gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+# uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
 # 開機自動啟動
+```shell
 sudo systemctl daemon-reload
 sudo systemctl enable hanlp_api.service  # 開機自動啟動
 sudo systemctl start hanlp_api.service   # 立即啟動
+```
 
 # 自動文件
 ```shell
