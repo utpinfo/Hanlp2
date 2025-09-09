@@ -1,7 +1,7 @@
 import glob
-
-import hanlp
+import torch
 import os
+from hanlp.components.ner.transformer_ner import TransformerNamedEntityRecognizer
 
 """
 * 初始化訓練
@@ -9,7 +9,9 @@ import os
 pip install --upgrade intel-tensorflow
 """
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 只顯示 Error
-from hanlp.components.ner.transformer_ner import TransformerNamedEntityRecognizer
+# 設定線程數 (MAC: sysctl -n hw.physicalcpu, Debian: grep -c ^processor /proc/cpuinfo)
+torch.set_num_threads(28)  # 根據 CPU 核心數調整
+torch.set_num_interop_threads(28)  # 對跨操作符並行也使用
 
 # 定義訓練檔案和合併檔案路徑
 train_files = glob.glob('../data/train/source_*.txt')
@@ -27,19 +29,21 @@ recognizer = TransformerNamedEntityRecognizer()
 save_dir = '../data/model/ner/product_bert'
 
 recognizer.fit(
-    trn_data=merged_train_file,  # 使用合併後的檔案
-    dev_data='../data/train/dev.txt',
-    save_dir=save_dir,
-    transformer='bert-base-chinese',
+    trn_data=merged_train_file,  # 待訓練檔案 (材料)
+    dev_data='../data/train/dev.txt',  # 待驗證檔案 (材料)
+    save_dir=save_dir,  # 結果
+    transformer='bert-base-chinese',  # 底層語言模型 (字级模型)
     # bert-base-chinese 或 electra-small (CPU慢), 可選: 1.FINE_ELECTRA_SMALL_ZH MSRA_NER_ELECTRA_SMALL_ZH
-    epochs=10,
-    batch_size=8,
-    word_dropout=0.05,
-    delimiter_in_entity='-',
-    char_level=True  # 👈 加這個
+    epochs=20,  # 訓練輪數 (調整10後正常)
+    batch_size=32,  # 每次訓練的樣本數。
+    # word_dropout=0.05, # 詞級別的隨機丟棄率
+    delimiter_in_entity='',  # 實體內的詞分隔符
+    char_level=True  # 👈 # 按字元級別處理
 )
-
+"""
 recognizer = hanlp.load(save_dir)
 test_sentences = '查询博士伦-XY99库存'
 results = recognizer.predict(test_sentences)
 print(results)
+"""
+recognizer.evaluate('../data/train/dev.txt', save_dir)

@@ -1,8 +1,12 @@
 import hanlp
+import torch
 
 """
 Service層
 """
+ # 設定線程數 (MAC: sysctl -n hw.physicalcpu, Debian: grep -c ^processor /proc/cpuinfo)
+torch.set_num_threads(8)  # 物理核心數
+torch.set_num_interop_threads(8)
 tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')
 
 # 加载用户自定义词典
@@ -33,7 +37,6 @@ def ner_predict(text: str):
     for i, tok in enumerate(tokens):
         if tok in custom_dict:
             pos_tags[i] = custom_dict[tok]
-
 
     # 將實體(NER) span 轉成逐 token NER
     for entity_text, entity_type, start, end in res['ner']:

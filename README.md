@@ -168,3 +168,11 @@ Hanlp2/
 ├── requirements.txt      # 套件依賴
 └── README.md
 ```
+
+
+# 訓練重點
+- B-NR 跟 E-NR 之間的I-NR內容格式需要多元
+
+# 文件
+- https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html
+- https://hanlp.hankcs.com/demos/tok.html
