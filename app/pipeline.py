@@ -1,12 +1,15 @@
 import hanlp
 import torch
+import os
 
 """
 Service層
 """
- # 設定線程數 (MAC: sysctl -n hw.physicalcpu, Debian: grep -c ^processor /proc/cpuinfo)
-torch.set_num_threads(8)  # 物理核心數
-torch.set_num_interop_threads(8)
+# 設定線程數 (MAC: sysctl -n hw.physicalcpu, Debian: grep -c ^processor /proc/cpuinfo)
+ncpu = os.cpu_count()
+if ncpu > 0:
+    torch.set_num_threads(ncpu)  # 根據 CPU 核心數調整
+    torch.set_num_interop_threads(ncpu)  # 對跨操作符並行也使用
 tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')
 
 # 加载用户自定义词典

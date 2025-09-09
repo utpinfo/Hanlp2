@@ -10,8 +10,10 @@ pip install --upgrade intel-tensorflow
 """
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 只顯示 Error
 # 設定線程數 (MAC: sysctl -n hw.physicalcpu, Debian: grep -c ^processor /proc/cpuinfo)
-torch.set_num_threads(28)  # 根據 CPU 核心數調整
-torch.set_num_interop_threads(28)  # 對跨操作符並行也使用
+ncpu = os.cpu_count()
+if ncpu > 0:
+    torch.set_num_threads(ncpu)  # 根據 CPU 核心數調整
+    torch.set_num_interop_threads(ncpu)  # 對跨操作符並行也使用
 
 # 定義訓練檔案和合併檔案路徑
 train_files = glob.glob('../data/train/source_*.txt')
