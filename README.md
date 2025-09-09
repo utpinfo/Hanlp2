@@ -2,6 +2,18 @@
 - pyenv install 3.8.20
 - pip install "hanlp[full]"
 - pip install -r requirements.txt
+<!--
+# MAC M系列啟用GPU
+pip install tensorflow-macos
+pip install tensorflow-metal
+
+import tensorflow as tf
+
+print("TensorFlow 版本:", tf.__version__)
+print("可用 GPU 数:", len(tf.config.list_physical_devices('GPU')))
+print("设备列表:", tf.config.list_physical_devices())
+-->
+
 # 目錄結構
 - mkdir data
 - touch data/trian.txt (80%數據)
