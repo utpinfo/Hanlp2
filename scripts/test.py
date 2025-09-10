@@ -59,5 +59,5 @@ def debug_ner(text):
 
 # 5️⃣ 測試
 if __name__ == "__main__":
-    sentence = "查询馮凱对账单"
+    sentence = "查询楊馮凱的借样"
     debug_ner(sentence)

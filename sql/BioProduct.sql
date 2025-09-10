@@ -72,7 +72,7 @@ begin
     end loop;
 
     -- 输出不同后缀
-    dbms_output.put_line('D E-WAREHOUSE');
+    dbms_output.put_line('D B-WAREHOUSE');
     dbms_output.put_line('Y I-WAREHOUSE');
     dbms_output.put_line('0 I-WAREHOUSE');
     dbms_output.put_line('1 E-WAREHOUSE');

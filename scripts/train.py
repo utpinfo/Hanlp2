@@ -36,11 +36,11 @@ recognizer.fit(
     save_dir=save_dir,  # 結果
     transformer='bert-base-chinese',  # 底層語言模型 (字级模型)
     # bert-base-chinese 或 electra-small (CPU慢), 可選: 1.FINE_ELECTRA_SMALL_ZH MSRA_NER_ELECTRA_SMALL_ZH
-    epochs=20,  # 訓練輪數 (調整10後正常)
+    epochs=10,  # 訓練輪數 (調整10後正常)
     batch_size=32,  # 每次訓練的樣本數。
     # word_dropout=0.05, # 詞級別的隨機丟棄率
     delimiter_in_entity='',  # 實體內的詞分隔符
-    char_level=True  # 👈 # 按字元級別處理
+    char_level=True  # 👈 # 按字元級別處理 (char_level=True: 逐字[一行一字])
 )
 """
 recognizer = hanlp.load(save_dir)
