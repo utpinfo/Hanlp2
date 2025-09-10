@@ -188,3 +188,7 @@ Hanlp2/
 # 文件
 - https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html
 - https://hanlp.hankcs.com/demos/tok.html
+- https://hanlp.hankcs.com/docs/annotations/pos/ctb.html
+
+# 自定義辭典
+BD = Business Document（缩写）
