@@ -14,13 +14,21 @@ print("可用 GPU 数:", len(tf.config.list_physical_devices('GPU')))
 print("设备列表:", tf.config.list_physical_devices())
 -->
 
-# 目錄結構
+# 目錄結構生成
 - mkdir data
 - touch data/trian.txt (80%數據)
 - touch data/dev.txt (20%數據)
 -->  
 
-# 準備材料
+# 工作流介紹 (HANLP2)
+- TOKEN (分割句子成單位詞)
+1. 分詞模組 （https://hanlp.hankcs.com/docs/api/hanlp/pretrained/tok.html)
+2. 自定義字典
+- NER (單位詞的命名)
+1. 命名模組 (https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html)
+2. 自定義命名規則
+
+# 準備材料 (BIO規範)
 - 訓練資料 (data/train.txt)
 ```txt
 我    O
@@ -192,3 +200,20 @@ Hanlp2/
 
 # 自定義辭典
 BD = Business Document（缩写）
+
+# 規則方案
+- 推薦 (部分輸入詞: 馮凱, 可以匹配)
+1. 字典加入全名： 楊馮凱
+2. NER訓練集部分名：
+```tsv
+馮 B-AGENT
+凱 I-AGENT
+```
+- 不推薦 (部分輸入詞: 馮凱, 無法匹配)
+1. 字典加入全名： 楊馮凱
+2. NER訓練集全名：
+```tsv
+楊 B-AGENT
+馮 I-AGENT
+凱 I-AGENT
+```
