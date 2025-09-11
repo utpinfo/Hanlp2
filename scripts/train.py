@@ -4,7 +4,8 @@ import os
 from hanlp.components.ner.transformer_ner import TransformerNamedEntityRecognizer
 
 """
-* 初始化訓練
+* 初始化訓練 
+# 格式 CoNLL/TSV
 # 加速 (INTEL)
 pip install --upgrade intel-tensorflow
 """
@@ -17,10 +18,10 @@ if ncpu > 0:
 
 # 定義訓練檔案和合併檔案路徑
 train_files = glob.glob('../data/train/source_*.txt')
-merged_train_file = '../data/train/merged_train.txt'
+train_file = '../data/train/train.txt'
 
 # 自動合併檔案
-with open(merged_train_file, 'w', encoding='utf-8') as outfile:
+with open(train_file, 'w', encoding='utf-8') as outfile:
     for train_file in train_files:
         with open(train_file, 'r', encoding='utf-8') as infile:
             outfile.write(infile.read())
@@ -31,7 +32,7 @@ recognizer = TransformerNamedEntityRecognizer()
 save_dir = '../data/model/ner/product_bert'
 
 recognizer.fit(
-    trn_data=merged_train_file,  # 待訓練檔案 (材料)
+    trn_data=train_file,  # 待訓練檔案 (材料)
     dev_data='../data/train/dev.txt',  # 待驗證檔案 (材料)
     save_dir=save_dir,  # 結果
     transformer='bert-base-chinese',  # 底層語言模型 (字级模型)

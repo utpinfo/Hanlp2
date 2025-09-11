@@ -32,7 +32,7 @@ def debug_ner(text):
     pos_tags = res['pos']
     ner_tags = ['O'] * len(tokens)
 
-    # 後處理：優先使用自定義詞典的詞性
+    # 後處理：優先使用自定義詞典的詞性®
     for i, token in enumerate(tokens):
         if token in custom_dict:
             pos_tags[i] = custom_dict[token]  # 使用自定義詞典的詞性
