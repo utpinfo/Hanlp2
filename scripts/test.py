@@ -1,16 +1,24 @@
+import os
+
 import hanlp
 import json
 
 # 1️⃣ 載入模型
 tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')  # 分詞器
-
+cur_dir = os.path.dirname(os.path.abspath(__file__))  # 當前檔案所在目錄
+prj_dir = os.path.dirname(cur_dir)
+ner_path = os.path.join(prj_dir, "data/model/ner/product_bert")
+dic_path = os.path.join(prj_dir, "data/dict")
 # 2️⃣ 載入自定義詞典
 custom_dict = {}
-with open("../data/dict/dict1.txt", "r", encoding="utf-8") as f:
-    for line in f:
-        word, tag = line.strip().split()
-        custom_dict[word] = tag  # 例如: 借樣 NN
+for filename in os.listdir(dic_path):
+    if filename.endswith(".json"):
+        path = os.path.join(dic_path, filename)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            custom_dict.update(data)  # 合併所有 JSON
 tokenizer.dict_force = custom_dict
+
 
 pos_tagger = hanlp.load(hanlp.pretrained.pos.CTB9_POS_ELECTRA_SMALL)  # 詞性標註器
 ner_model = hanlp.load('../data/model/ner/product_bert')  # 自訓練的 NER 模型
@@ -59,5 +67,5 @@ def debug_ner(text):
 
 # 5️⃣ 測試
 if __name__ == "__main__":
-    sentence = "查询楊馮凱的借样"
+    sentence = "海俪恩-120009-J021P3 偏光 客户往来对账单"
     debug_ner(sentence)

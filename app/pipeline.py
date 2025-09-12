@@ -1,3 +1,5 @@
+import json
+
 import hanlp
 import torch
 import os
@@ -15,14 +17,16 @@ tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')
 cur_dir = os.path.dirname(os.path.abspath(__file__))  # 當前檔案所在目錄
 prj_dir = os.path.dirname(cur_dir)
 ner_path = os.path.join(prj_dir, "data/model/ner/product_bert")
-dic_path = os.path.join(prj_dir, "data/dict/dict1.txt")
+dic_path = os.path.join(prj_dir, "data/dict")
 
-# 加载用户自定义词典
+# 加载用户自定义词典(遍歷資料夾下所有 .json 文件)
 custom_dict = {}
-with open(dic_path, "r", encoding="utf-8") as f:
-    for line in f:
-        word, tag = line.strip().split()
-        custom_dict[word] = tag  # 例如: 借样 NN
+for filename in os.listdir(dic_path):
+    if filename.endswith(".json"):
+        path = os.path.join(dic_path, filename)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            custom_dict.update(data)  # 合併所有 JSON
 tokenizer.dict_force = custom_dict
 
 pos_tagger = hanlp.load(hanlp.pretrained.pos.CTB9_POS_ELECTRA_SMALL)
