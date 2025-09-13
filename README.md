@@ -198,6 +198,10 @@ Hanlp2/
 - https://hanlp.hankcs.com/demos/tok.html
 - https://hanlp.hankcs.com/docs/annotations/pos/ctb.html
 
+# 最佳組合
+- 代碼類 → tokenizer.dict_force (穩定、格式固定)
+- 名稱類 → NER（DictionaryNER / 訓練模型）（不規則、變動多）
+
 # 自定義辭典
 BD = Business Document（缩写）
 
