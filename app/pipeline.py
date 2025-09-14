@@ -12,14 +12,12 @@ if ncpu > 0:
     torch.set_num_threads(ncpu)
     torch.set_num_interop_threads(ncpu)
 
-tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')
-
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 prj_dir = os.path.dirname(cur_dir)
 ner_path = os.path.join(prj_dir, "data/model/ner/product_bert")
 dic_path = os.path.join(prj_dir, "data/dict")
 
-# 加载用户自定义词典(遍历所有 .json 文件)，格式必须是 [{"token":..,"pos":..,"ner":..},...]
+# 加載分詞辭典
 custom_dict_raw = []
 for filename in os.listdir(dic_path):
     if filename.endswith(".json"):
@@ -30,7 +28,8 @@ for filename in os.listdir(dic_path):
 
 # 建立 custom_dict: token -> {"pos":..,"ner":..}
 custom_dict = {item["token"]: {"pos": item["pos"], "ner": item["ner"]} for item in custom_dict_raw}
-# 强制分词时识别字典中的 token
+# 加載自定義分詞
+tokenizer = hanlp.load('FINE_ELECTRA_SMALL_ZH')
 tokenizer.dict_force = {item["token"]: item["ner"] for item in custom_dict_raw}
 
 pos_tagger = hanlp.load(hanlp.pretrained.pos.CTB9_POS_ELECTRA_SMALL)
@@ -50,16 +49,15 @@ def ner_predict(text: str):
     pos_tags = res['pos']
     ner_tags = ['O'] * len(tokens)
 
-    # 1. 字典覆盖 token -> pos + ner
+    # 1. 自定義字典覆盖Token/Ner
     for i, tok in enumerate(tokens):
         if tok in custom_dict:
             pos_tags[i] = custom_dict[tok]["pos"]
             ner_tags[i] = custom_dict[tok]["ner"]
 
-    # 2. 展开模型 NER span (只标非 skip_pos，且未被字典覆盖)
+    # 2. Ner檢核處理
     for entity_text, entity_type, start, end in res['ner']:
         for i in range(start, end):
-            print("token:", tokens[i], "pos:", pos_tags[i])
             if pos_tags[i] not in skip_pos and tokens[i] not in custom_dict:
                 ner_tags[i] = entity_type
 
