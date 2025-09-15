@@ -81,13 +81,9 @@ def ner_predict(text: str):
 
     # 3. 输出 JSON，加入語意角色標記
     output = [
-        {"token": t, "pos": p, "ner": n, "srl": []}
+        {"token": t, "pos": p, "ner": n, }
         for t, p, n in zip(tokens, pos_tags, ner_tags)
     ]
-    # 添加語意角色標記結果
-    for predicate, *roles in srl_tags:
-        for role_label, start, end in roles:
-            for i in range(start, end):
-                output[i]["srl"].append({"predicate": predicate, "role": role_label})
+    # 4. 添加語意角色標記結果
 
     return output
