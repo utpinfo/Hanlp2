@@ -2,6 +2,7 @@ import json
 import hanlp
 import torch
 import os
+from app.cn_util import detect_chinese_type, zh_conv
 
 """
 Service层
@@ -49,11 +50,24 @@ def ner_predict(text: str):
     pos_tags = res['pos']
     ner_tags = ['O'] * len(tokens)
 
-    # 1. 自定義字典覆盖Token/Ner
+    # 1. 自定義字典覆盖Token/Ner (Support 繁體句子, 簡體字典)
+    zh_cache = {}  # 用来缓存 token 的简体版本
     for i, tok in enumerate(tokens):
+        # 先查原 token
         if tok in custom_dict:
             pos_tags[i] = custom_dict[tok]["pos"]
             ner_tags[i] = custom_dict[tok]["ner"]
+        else:
+            # 先看缓存
+            if tok in zh_cache:
+                tok_simp = zh_cache[tok]
+            else:
+                tok_simp = zh_conv(tok, 'zh-cn')
+                zh_cache[tok] = tok_simp  # 保存到缓存
+            # 用简体 token 查字典
+            if tok_simp in custom_dict:
+                pos_tags[i] = custom_dict[tok_simp]["pos"]
+                ner_tags[i] = custom_dict[tok_simp]["ner"]
 
     # 2. Ner檢核處理
     for entity_text, entity_type, start, end in res['ner']:
