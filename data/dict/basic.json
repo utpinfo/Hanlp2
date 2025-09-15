@@ -2,56 +2,56 @@
   {
     "token": "借样",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "ORDER:SAMPLE"
   },
   {
     "token": "对账单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "STATEMENT"
   },
   {
     "token": "账单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "STATEMENT"
   },
   {
     "token": "订单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "ORDER:SALES"
   },
   {
     "token": "出货单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "SHIPMENT"
   },
   {
     "token": "采购单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "ORDER:PURCHASE"
   },
   {
     "token": "验收单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "RECEIPT"
   },
   {
     "token": "往来对账单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "STATEMENT"
   },
   {
     "token": "客户往来对账单",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "STATEMENT"
   },
   {
     "token": "形式发票",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "INVOICE:PROFORMA"
   },
   {
     "token": "库存",
     "pos": "BD",
-    "ner": "BD"
+    "ner": "INVENTORY"
   }
 ]
