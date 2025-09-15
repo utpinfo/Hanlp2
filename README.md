@@ -1,7 +1,11 @@
-# 環境配置
+# 窮逼の自然語言模組
+
+## 環境配置
+
 - pyenv install 3.8.20
 - pip install "hanlp[full]"
 - pip install -r requirements.txt
+
 <!--
 # MAC M系列啟用GPU
 pip install tensorflow-macos
@@ -14,22 +18,42 @@ print("可用 GPU 数:", len(tf.config.list_physical_devices('GPU')))
 print("设备列表:", tf.config.list_physical_devices())
 -->
 
-# 目錄結構生成
+## 目錄結構生成
+
 - mkdir data
 - touch data/trian.txt (80%數據)
 - touch data/dev.txt (20%數據)
--->  
+  -->
 
-# 工作流介紹 (HANLP2)
+## 工作流介紹 (HANLP2)
+
 - TOKEN (分割句子成單位詞)
-1. 分詞模組 （https://hanlp.hankcs.com/docs/api/hanlp/pretrained/tok.html)
-2. 自定義字典
-- NER (單位詞的命名)
-1. 命名模組 (https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html)
-2. 自定義命名規則
 
-# 準備材料 (BIO規範)
+1. 在線模組: https://hanlp.hankcs.com/docs/api/hanlp/pretrained/tok.html
+2. 專案模組: hanlp.pretrained.tok.FINE_ELECTRA_SMALL_ZH
+3. 自定義字典
+
+- POS (詞性)
+
+1. 在線模組: https://hanlp.hankcs.com/docs/api/hanlp/pretrained/pos.html
+2. 專案模組: hanlp.pretrained.pos.CTB9_POS_ELECTRA_SMALL
+3. 自定義命名規則
+
+- NER (單位詞的命名)
+
+1. 在線模組: https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html
+2. 專案模組: transformer='bert-base-chinese'
+3. 自定義命名規則
+
+- SRL (語意角色)
+
+1. 在線模組: https://hanlp.hankcs.com/docs/api/hanlp/pretrained/srl.html
+2. 專案模組: hanlp.pretrained.srl.CPB3_SRL_ELECTRA_SMALL
+
+## 準備材料 (BIO規範)
+
 - 訓練資料 (data/train.txt)
+
 ```txt
 我    O
 想    O
@@ -47,6 +71,7 @@ Y    I-PRODUCT
 ```
 
 - 驗證資料 (data/dev.txt)
+
 ```txt
 查 O
 询 O
@@ -57,10 +82,12 @@ Y    I-PRODUCT
 存 O
 ```
 
-# 训练HANLP2
+## 训练HANLP2
+
 ```python
 import hanlp
 import os
+
 """
 # 加速 (INTEL)
 pip install --upgrade intel-tensorflow
@@ -75,12 +102,13 @@ recognizer.fit(
     trn_data='data/train.txt',
     dev_data='data/dev.txt',
     save_dir=save_dir,
-    transformer='bert-base-chinese',# bert-base-chinese 或 electra-small (CPU慢), 可選: 1.FINE_ELECTRA_SMALL_ZH MSRA_NER_ELECTRA_SMALL_ZH
+    transformer='bert-base-chinese',
+    # bert-base-chinese 或 electra-small (CPU慢), 可選: 1.FINE_ELECTRA_SMALL_ZH MSRA_NER_ELECTRA_SMALL_ZH
     epochs=10,
     batch_size=8,
     word_dropout=0.05,
     delimiter_in_entity='-',
-    char_level=True   # 👈 加這個
+    char_level=True  # 👈 加這個
 )
 
 recognizer = hanlp.load(save_dir)
@@ -89,8 +117,8 @@ results = recognizer.predict(test_sentences)
 print(results)
 ```
 
+## 测试
 
-# 测试
 ```
 import hanlp
 
@@ -103,7 +131,8 @@ result = ner(text)
 print(result)
 ```
 
-# 測試[2]
+## 測試[2]
+
 ```python
 # 1️⃣ 加载模型
 import hanlp
@@ -114,10 +143,10 @@ pos_tagger = hanlp.load(hanlp.pretrained.pos.CTB5_POS_RNN)  # 詞性標註器
 ner_model = hanlp.load('data/model/ner/product_bert')  # 命名實體識別模型
 
 # 2️⃣ 构建 pipeline
-pipeline = hanlp.pipeline() \
-    .append(tokenizer, output_key='tok') \
-    .append(pos_tagger, input_key='tok', output_key='pos') \
-    .append(ner_model, input_key='tok', output_key='ner')
+pipeline = hanlp.pipeline()
+.append(tokenizer, output_key='tok')
+.append(pos_tagger, input_key='tok', output_key='pos')
+.append(ner_model, input_key='tok', output_key='ner')
 
 # 3️⃣ 测试句子
 sentence = '查询ME&CITY4支装展架（太阳镜）库存'
@@ -129,20 +158,23 @@ for token, pos, ner in zip(res['tok'], res['pos'], res['ner']):
 
 ```
 
-# 啟動API
+## 啟動API
+
 ```shell
 gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
 # uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-# 開機自動啟動
+## 開機自動啟動
+
 ```shell
 sudo systemctl daemon-reload
 sudo systemctl enable hanlp_api.service  # 開機自動啟動
 sudo systemctl start hanlp_api.service   # 立即啟動
 ```
 
-# 自動文件
+## 自動文件
+
 ```shell
 cat << EFO > /etc/systemd/system/hanlp_api.service
 [Unit]
@@ -168,7 +200,8 @@ EFO
 http://127.0.0.1:8000/docs
 -->
 
-# 目錄結構
+## 目錄結構
+
 ```text
 Hanlp2/
 ├── app/                  # API 與程式碼
@@ -189,33 +222,42 @@ Hanlp2/
 └── README.md
 ```
 
+## 訓練重點
 
-# 訓練重點
 - B-NR 跟 E-NR 之間的I-NR內容格式需要多元
 
-# 文件
+## 文件
+
 - https://hanlp.hankcs.com/docs/api/hanlp/pretrained/ner.html
 - https://hanlp.hankcs.com/demos/tok.html
 - https://hanlp.hankcs.com/docs/annotations/pos/ctb.html
 
-# 最佳組合
+## 最佳組合
+
 - 代碼類 → tokenizer.dict_force (穩定、格式固定)
 - 名稱類 → NER（DictionaryNER / 訓練模型）（不規則、變動多）
 
-# 自定義辭典
+## 自定義辭典
+
 BD = Business Document（缩写）
 
-# 規則方案
+## 規則方案
+
 - 推薦 (部分輸入詞: 馮凱, 可以匹配)
+
 1. 字典加入全名： 楊馮凱
 2. NER訓練集部分名：
+
 ```tsv
 馮 B-AGENT
 凱 I-AGENT
 ```
+
 - 不推薦 (部分輸入詞: 馮凱, 無法匹配)
+
 1. 字典加入全名： 楊馮凱
 2. NER訓練集全名：
+
 ```tsv
 楊 B-AGENT
 馮 I-AGENT

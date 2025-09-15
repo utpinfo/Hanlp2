@@ -35,12 +35,15 @@ tokenizer.dict_force = {item["token"]: item["ner"] for item in custom_dict_raw}
 
 pos_tagger = hanlp.load(hanlp.pretrained.pos.CTB9_POS_ELECTRA_SMALL)
 ner_model = hanlp.load(ner_path)
+# 加載語意角色標記模型
+srl_model = hanlp.load(hanlp.pretrained.srl.CPB3_SRL_ELECTRA_SMALL)
 
-# 建立 pipeline
+# 建立 pipeline，加入語意角色標記
 pipeline = hanlp.pipeline() \
     .append(tokenizer, output_key='tok') \
     .append(pos_tagger, input_key='tok', output_key='pos') \
-    .append(ner_model, input_key='tok', output_key='ner')
+    .append(ner_model, input_key='tok', output_key='ner') \
+    .append(srl_model, input_key='tok', output_key='srl')
 
 
 def ner_predict(text: str):
@@ -49,6 +52,7 @@ def ner_predict(text: str):
     tokens = res['tok']
     pos_tags = res['pos']
     ner_tags = ['O'] * len(tokens)
+    srl_tags = res['srl']
 
     # 1. 自定義字典覆盖Token/Ner (Support 繁體句子, 簡體字典)
     zh_cache = {}  # 用来缓存 token 的简体版本
@@ -75,9 +79,15 @@ def ner_predict(text: str):
             if pos_tags[i] not in skip_pos and tokens[i] not in custom_dict:
                 ner_tags[i] = entity_type
 
-    # 3. 输出 JSON
+    # 3. 输出 JSON，加入語意角色標記
     output = [
-        {"token": t, "pos": p, "ner": n}
+        {"token": t, "pos": p, "ner": n, "srl": []}
         for t, p, n in zip(tokens, pos_tags, ner_tags)
     ]
+    # 添加語意角色標記結果
+    for predicate, *roles in srl_tags:
+        for role_label, start, end in roles:
+            for i in range(start, end):
+                output[i]["srl"].append({"predicate": predicate, "role": role_label})
+
     return output
