@@ -1,41 +1,37 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+
+from .cn_util import zh_conv
 from .pipeline import ner_predict
 
 app = FastAPI(
     title="ERP NLP API",
-    description="這個 API 提供中文文本的 NER 分析",
+    description="提供中文文本的 NER 分析和简繁转换",
     version="1.0.0"
 )
 
 
-class TextRequest(BaseModel):
+# NER 请求模型
+class NERRequest(BaseModel):
     text: str
 
 
-@app.post(
-    "/ner",
-    summary="命名實體識別",
-    description="輸入中文文本，返回每個詞的分詞、詞性和 NER 標籤"
-)
-def ner_api(req: TextRequest):
-    """
-    POST /ner
-    輸入 JSON: {"text": "查詢ME&CITY4支裝展架（太陽鏡）庫存"}
-    返回 JSON: [{"token": "ME", "pos": "NR", "ner": "PRODUCT"}, ...]
-    """
+# 简繁转换请求模型
+class ZhConvRequest(BaseModel):
+    text: str
+    target: str = 'auto'  # 可选，默认自动判别
+
+
+@app.post("/ner", summary="命名实体识别", description="输入中文文本，返回分词、词性和NER标签")
+def ner_api(req: NERRequest):
     return ner_predict(req.text)
 
 
-@app.post(
-    "/zh-conv",
-    summary="簡體繁體互轉",
-    description="輸入中文文本，簡體繁體互轉"
-)
-def zh_conv_api(req: TextRequest):
+@app.post("/zh-conv", summary="简体繁体互转", description="输入中文文本，简体繁体互转")
+def zh_conv_api(req: ZhConvRequest):
     """
-    POST /ner
-    輸入 JSON: {"text": "查詢ME&CITY4支裝展架（太陽鏡）庫存"}
-    返回 JSON: [{"token": "ME", "pos": "NR", "ner": "PRODUCT"}, ...]
+    返回：
+      - 如果 target='auto'，返回 {"text": 原文, "original_type": "zh-cn/zh-tw"}
+      - 否则返回 {"text": 转换后的文本}
     """
-    return ner_predict(req.text, req.target)
+    return {"text": zh_conv(req.text, req.target)}

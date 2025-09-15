@@ -49,15 +49,19 @@ def convert_chinese(text: str, target: str) -> str:
 
 def zh_conv(text: str, target: str = 'auto'):
     """
-    判斷中文文本類型並轉換（可自動判斷）
+    判斷中文文本類型並轉換
     :param text: 中文文本
-    :param target: 'zh-cn' 簡體, 'zh-tw' 繁體, 'auto' 保持原文並返回原始類型
-    :return: 轉換後文本 或 (原文, 原始類型)
+    :param target: 'zh-cn' 簡體, 'zh-tw' 繁體, 'auto' 自動判斷並轉成相反版本
+    :return: 轉換後文本
     """
     original_type = detect_chinese_type(text)
 
     if target == 'auto':
-        return text, original_type
+        # auto 模式，返回“反转”版本
+        if original_type == 'zh-cn':
+            return convert_chinese(text, 'zh-tw')
+        else:
+            return convert_chinese(text, 'zh-cn')
     else:
         return convert_chinese(text, target)
 
