@@ -8,8 +8,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 class TextRequest(BaseModel):
     text: str
+
 
 @app.post(
     "/ner",
@@ -23,3 +25,17 @@ def ner_api(req: TextRequest):
     返回 JSON: [{"token": "ME", "pos": "NR", "ner": "PRODUCT"}, ...]
     """
     return ner_predict(req.text)
+
+
+@app.post(
+    "/zh-conv",
+    summary="簡體繁體互轉",
+    description="輸入中文文本，簡體繁體互轉"
+)
+def zh_conv_api(req: TextRequest):
+    """
+    POST /ner
+    輸入 JSON: {"text": "查詢ME&CITY4支裝展架（太陽鏡）庫存"}
+    返回 JSON: [{"token": "ME", "pos": "NR", "ner": "PRODUCT"}, ...]
+    """
+    return ner_predict(req.text, req.target)
