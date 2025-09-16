@@ -263,3 +263,23 @@ BD = Business Document（缩写）
 馮 I-AGENT
 凱 I-AGENT
 ```
+
+# 訓練驗證
+
+- val_loss 持續下降 → 模型仍在學習，訓練可以繼續。
+- val_loss 開始上升 → 可能開始 overfitting，可以暫停。
+- F1 持續上升 → 模型仍在提升。
+- F1 停滯或下降 → 可停止訓練。
+
+```
+Epoch   Train Loss   Val Loss
+1       2.5          2.6
+2       1.9          2.0
+3       1.5          1.6
+4       1.2          1.3
+5       1.0          1.0
+6       0.8          0.9
+7       0.7          0.95  ← 開始上升
+* epoch 7 loss 上升 → 說明模型已經學到最佳驗證效果。
+* epochs最佳特定判定: 6 (當 F1 停滯或 loss 開始上升)
+```
