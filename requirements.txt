@@ -3,6 +3,8 @@ fastapi
 uvicorn  # ASGI 服务器
 gunicorn  # WSGI 服务器
 
+tensorflow #
+
 # NLP 相关
 hanlp
 

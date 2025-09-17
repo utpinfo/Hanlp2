@@ -2,6 +2,7 @@ import glob
 import torch
 import os
 from hanlp.components.classifiers.transformer_classifier_tf import TransformerClassifierTF
+import numpy as np
 
 """
 * 初始化訓練 Intent
@@ -14,7 +15,9 @@ ncpu = os.cpu_count()
 if ncpu > 0:
     torch.set_num_threads(ncpu)
     torch.set_num_interop_threads(ncpu)
-
+# 新版 NumPy (>=1.24) 已經移除 np.float, 添加此段避開錯誤
+if not hasattr(np, "float"):
+    np.float = float
 # 定義訓練檔案和合併檔案路徑
 train_dir = '../data/train/intent'
 train_files = glob.glob(os.path.join(train_dir, 'source_*.tsv'))
@@ -29,10 +32,10 @@ with open(train_file, 'w', encoding='utf-8') as outfile:
             outfile.write('\n')
 
 # 訓練 Intent 模型
-classifier =  TransformerClassifierTF()
+classifier = TransformerClassifierTF()
 classifier.fit(
-    #trn_data=CHNSENTICORP_ERNIE_TRAIN,  # 訓練數據 (TSV: text \t label)
-    #dev_data=CHNSENTICORP_ERNIE_DEV,  # 驗證數據
+    # trn_data=CHNSENTICORP_ERNIE_TRAIN,  # 訓練數據 (TSV: text \t label)
+    # dev_data=CHNSENTICORP_ERNIE_DEV,  # 驗證數據
     trn_data=train_file,  # 訓練數據 (TSV: text \t label)
     dev_data=os.path.join(train_dir, 'dev.tsv'),  # 驗證數據
     save_dir=save_dir,  # 模型輸出目錄
