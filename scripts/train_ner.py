@@ -18,8 +18,8 @@ if ncpu > 0:
 
 # 定義訓練檔案和合併檔案路徑
 train_dir = '../data/train/ner'
-train_files = glob.glob(os.path.join(train_dir, 'source_*.txt'))
-train_file = os.path.join(train_dir, 'train.txt')
+train_files = glob.glob(os.path.join(train_dir, 'source_*.tsv'))
+train_file = os.path.join(train_dir, 'train.tsv')
 save_dir = '../data/model/ner/product_bert'
 
 # 自動合併檔案
@@ -33,7 +33,7 @@ with open(train_file, 'w', encoding='utf-8') as outfile:
 recognizer = TransformerNamedEntityRecognizer()
 recognizer.fit(
     trn_data=train_file,  # 待訓練檔案 (材料)
-    dev_data=os.path.join(train_dir, 'dev.txt'),  # 待驗證檔案 (材料)
+    dev_data=os.path.join(train_dir, 'dev.tsv'),  # 待驗證檔案 (材料)
     save_dir=save_dir,  # 結果
     transformer='bert-base-chinese',  # 底層語言模型 (字级模型)
     # bert-base-chinese 或 electra-small (CPU慢), 可選: 1.FINE_ELECTRA_SMALL_ZH MSRA_NER_ELECTRA_SMALL_ZH
@@ -49,4 +49,4 @@ test_sentences = '查询博士伦-XY99库存'
 results = recognizer.predict(test_sentences)
 print(results)
 """
-recognizer.evaluate(os.path.join(train_dir, 'dev.txt'), save_dir)
+recognizer.evaluate(os.path.join(train_dir, 'dev.tsv'), save_dir)
