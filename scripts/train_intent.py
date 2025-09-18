@@ -40,8 +40,9 @@ classifier.fit(
     dev_data=os.path.join(train_dir, 'dev.tsv'),  # 驗證數據
     save_dir=save_dir,  # 模型輸出目錄
     transformer='bert-base-chinese',  # 預訓練模型
-    epochs=5,  # 訓練輪數 (小數據集建議 20~50，大數據 5~10 就夠)
+    epochs=12,  # 訓練輪數 (小數據集建議 20~50，大數據 5~10 就夠)
     batch_size=8,  # batch size
+    skip_header=False,
 )
 
 """

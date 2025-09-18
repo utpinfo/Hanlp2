@@ -169,14 +169,14 @@ gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
 
 ```shell
 sudo systemctl daemon-reload
-sudo systemctl enable hanlp_api.service  # 開機自動啟動
-sudo systemctl start hanlp_api.service   # 立即啟動
+sudo systemctl enable hanlp-api.service  # 開機自動啟動
+sudo systemctl start hanlp-api.service   # 立即啟動
 ```
 
 ## 自動文件
 
 ```shell
-cat << EFO > /etc/systemd/system/hanlp_api.service
+cat << EFO > /etc/systemd/system/hanlp-api.service
 [Unit]
 Description=HanLP FastAPI Service
 After=network.target

@@ -11,12 +11,11 @@ if __name__ == "__main__":
     #print(ner_output)
 
     # 加载训练好的模型
-
-    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # 禁用 GPU
     classifier = hanlp.load('../data/model/intent/bert_base')
-    test_sentences = ['查询DY01库存', '我要退貨']
+    test_sentences = ['查询DY01库存', '我要退货','我要退貨','查询指定仓库商品的库存','查询借样','形式发票','对账单']
     # 模型预测
     results = classifier.predict(test_sentences)
+    print(results)
     # 输出结果
     for sent, label in zip(test_sentences, results):
         print(f"{sent} -> {label}")

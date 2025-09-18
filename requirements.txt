@@ -10,3 +10,6 @@ hanlp
 
 # 中文简繁转换
 opencc
+
+
+numpy==1.24.0

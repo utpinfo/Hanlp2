@@ -7,7 +7,7 @@ from .pipeline import ner_predict
 app = FastAPI(
     title="ERP NLP API",
     description="提供中文文本的 NER 分析和简繁转换",
-    version="1.0.0"
+    version="1.0.1"
 )
 
 
